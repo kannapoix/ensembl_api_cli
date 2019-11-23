@@ -1,0 +1,11 @@
+[package]
+name = "ensembl_rest_client"
+version = "0.1.0"
+authors = ["kanna"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = "2.33.0"
+reqwest = "0.9.22"
