@@ -139,13 +139,13 @@ fn failed_record_to_file(file: &mut File, failed_id: &String) {
     file.write_fmt(format_args!("{}\n", failed_id)).unwrap();
 }
 
-fn get_transcript_sequence_by_id(id: &String) -> Result<reqwest::Response, reqwest::Error> {
+fn get_transcript_sequence_by_id(id: &String, sequence_type: &String) -> Result<reqwest::Response, reqwest::Error> {
     let client = reqwest::Client::new();
     let path = format!("{}{}", "https://rest.ensembl.org/sequence/id/", id);
                 
     client.get(path.as_str())
         .header(reqwest::header::CONTENT_TYPE, "text/x-fasta")
-        .query(&[("type", "cdna")])
+        .query(&[("type", sequence_type), ("object_type", &"transcript".to_string())])
         .send()
 }
 
