@@ -19,7 +19,6 @@ fn main() -> std::io::Result<()> {
                 .arg(Arg::with_name("id")
                     .help("Ensembl static ID.")
                     .value_name("ID")
-                    .takes_value(true)
                     )
                 .arg(Arg::with_name("type")
                     .long("type")
