@@ -4,7 +4,7 @@ extern crate reqwest;
 use std::fs::{self, File, OpenOptions};
 use std::io::{Write, BufReader, BufRead};
 use std::path::Path;
-use clap::{Arg, App};
+use clap::{Arg, App, SubCommand};
 use std::io::{stdout, BufWriter};
 
 fn main() -> std::io::Result<()> {
@@ -12,6 +12,29 @@ fn main() -> std::io::Result<()> {
         .version("v0.1.0")
         .author("kanna. <kanna@protonmail.ch>")
         .about("Call ensembl API easily")
+        .subcommand(SubCommand::with_name("sequence")
+            .about("Call get sequence endpoint.")
+            .subcommand(SubCommand::with_name("id")
+                .about("Get sequence by ID.")
+                .arg(Arg::with_name("id")
+                    .help("Ensembl static ID.")
+                    .value_name("ID")
+                    .takes_value(true)
+                    )
+                .arg(Arg::with_name("type")
+                    .long("type")
+                    .help("Type of sequence.")
+                    .possible_values(&["genomic", "cds", "cdna", "protein"])
+                    .takes_value(true)
+                    )
+                .arg(Arg::with_name("format")
+                    .long("format")
+                    .help("Format of return data.")
+                    .possible_values(&["json", "fasta"])
+                    .takes_value(true)
+                    )
+                )
+            )
         .arg(Arg::with_name("directory")
             .short("d")
             .long("directory")
@@ -72,14 +95,20 @@ fn main() -> std::io::Result<()> {
         }
         }
 
+    if let Some(sequence_command) = matches.subcommand_matches("sequence") {
+        if let Some(id_command) = sequence_command.subcommand_matches("id") {
+            let path = "/sequence/id".to_string();
+            let id = id_command.value_of("id").unwrap();
+            let path_with_id = format!("{}/{}", path, id);
+            
+            let sequence_type = id_command.value_of("type").unwrap_or("cdna").to_string();
 
-    if matches.is_present("id") {
-        let id = matches.value_of("id").unwrap().to_string();
-        let mut response = get_transcript_sequence_by_id(&id).unwrap();
+            let mut response = ensembl_client(&path_with_id, &sequence_type).unwrap();
 
-        let stdout = stdout();
-        let mut out = BufWriter::new(stdout.lock());
-        writeln!(out, "{}", response.text().unwrap()).unwrap();
+            let stdout = stdout();
+            let mut out = BufWriter::new(stdout.lock());
+            writeln!(out, "{}", response.text().unwrap()).unwrap();
+        }
     }
 
     Ok(())
@@ -114,6 +143,16 @@ fn get_transcript_sequence_by_id(id: &String) -> Result<reqwest::Response, reqwe
                 
     client.get(path.as_str())
         .header(reqwest::header::CONTENT_TYPE, "text/x-fasta")
-        .query(&[("object_type", "transcript")])
+        .query(&[("type", "cdna")])
+        .send()
+}
+
+fn ensembl_client(path: &String, sequence_type: &String) -> Result<reqwest::Response, reqwest::Error> {
+    let client = reqwest::Client::new();
+    let path = format!("{}{}", "https://rest.ensembl.org", path);
+
+    client.get(path.as_str())
+        .header(reqwest::header::CONTENT_TYPE, "text/x-fasta")
+        .query(&[("type", sequence_type), ("object_type", &"transcript".to_string())])
         .send()
 }
