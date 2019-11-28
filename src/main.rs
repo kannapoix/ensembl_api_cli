@@ -99,9 +99,9 @@ fn main() -> std::io::Result<()> {
                     }
                 }
             } else {
-                let path = "/sequence/id".to_string();
+                let mut path = "/sequence/id/".to_string();
                 let id = id_command.value_of("id").unwrap();
-                let path_with_id = format!("{}/{}", path, id);
+                path.push_str(id);
     
                 let mut response = ensembl_client(&path, &sequence_type).unwrap();
     
