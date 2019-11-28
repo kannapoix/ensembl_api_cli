@@ -57,7 +57,7 @@ fn main() -> std::io::Result<()> {
                 fs::create_dir_all("./result")?;
             
                 if directory.is_dir() {
-                    let files_path = loop_files_in_directory(directory.to_str().unwrap().to_string());
+                    let files_path = loop_files_in_directory(directory.to_str().unwrap());
                 
                     for file_path in files_path {
                         let file_name = file_path.as_path().file_name().unwrap();
@@ -103,7 +103,7 @@ fn main() -> std::io::Result<()> {
                 let id = id_command.value_of("id").unwrap();
                 let path_with_id = format!("{}/{}", path, id);
     
-                let mut response = ensembl_client(&path_with_id, &sequence_type).unwrap();
+                let mut response = ensembl_client(&path, &sequence_type).unwrap();
     
                 let stdout = stdout();
                 let mut out = BufWriter::new(stdout.lock());
@@ -115,9 +115,9 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 
-fn loop_files_in_directory(directory: String) -> Vec<std::path::PathBuf> {
+fn loop_files_in_directory(directory: &str) -> Vec<std::path::PathBuf> {
     let mut pathes = Vec::new();
-    for entry in fs::read_dir(directory.as_str()).unwrap() {
+    for entry in fs::read_dir(directory).unwrap() {
         let entry = entry.unwrap();
         pathes.push(entry.path());
     }
@@ -134,11 +134,11 @@ fn open_file(path: std::path::PathBuf) -> std::fs::File {
     file
 }
 
-fn failed_record_to_file(file: &mut File, failed_id: &String) {
+fn failed_record_to_file(file: &mut File, failed_id: &str) {
     file.write_fmt(format_args!("{}\n", failed_id)).unwrap();
 }
 
-fn get_transcript_sequence_by_id(id: &String, sequence_type: &String) -> Result<reqwest::Response, reqwest::Error> {
+fn get_transcript_sequence_by_id(id: &str, sequence_type: &str) -> Result<reqwest::Response, reqwest::Error> {
     let client = reqwest::Client::new();
     let path = format!("{}{}", "https://rest.ensembl.org/sequence/id/", id);
                 
@@ -148,7 +148,7 @@ fn get_transcript_sequence_by_id(id: &String, sequence_type: &String) -> Result<
         .send()
 }
 
-fn ensembl_client(path: &String, sequence_type: &String) -> Result<reqwest::Response, reqwest::Error> {
+fn ensembl_client(path: &str, sequence_type: &str) -> Result<reqwest::Response, reqwest::Error> {
     let client = reqwest::Client::new();
     let path = format!("{}{}", "https://rest.ensembl.org", path);
 
