@@ -1,14 +1,18 @@
 extern crate clap;
 extern crate reqwest;
 
-use std::fs::{self, File, OpenOptions};
+mod ensembl_api;
+
+use std::fs::{self, OpenOptions};
 use std::io::{Write, BufReader, BufRead};
 use std::path::Path;
 use clap::{Arg, App, SubCommand};
 use std::io::{stdout, BufWriter};
 
+use ensembl_api::*;
+
 fn main() -> std::io::Result<()> {
-    let matches = App::new("ensembl rest client")
+    let matches = App::new("ensembl api cli")
         .version("v0.1.0")
         .author("kanna. <kanna@protonmail.ch>")
         .about("Call ensembl API easily")
@@ -123,37 +127,4 @@ fn loop_files_in_directory(directory: &str) -> Vec<std::path::PathBuf> {
     }
 
     pathes
-}
-
-fn open_file(path: std::path::PathBuf) -> std::fs::File {
-    let file = match File::open(path) {
-        Err(_) => panic!("couldn't open file."),
-        Ok(file) => file,
-    };
-
-    file
-}
-
-fn failed_record_to_file(file: &mut File, failed_id: &str) {
-    file.write_fmt(format_args!("{}\n", failed_id)).unwrap();
-}
-
-fn get_transcript_sequence_by_id(id: &str, sequence_type: &str) -> Result<reqwest::Response, reqwest::Error> {
-    let client = reqwest::Client::new();
-    let path = format!("{}{}", "https://rest.ensembl.org/sequence/id/", id);
-                
-    client.get(path.as_str())
-        .header(reqwest::header::CONTENT_TYPE, "text/x-fasta")
-        .query(&[("type", sequence_type), ("object_type", &"transcript".to_string())])
-        .send()
-}
-
-fn ensembl_client(path: &str, sequence_type: &str) -> Result<reqwest::Response, reqwest::Error> {
-    let client = reqwest::Client::new();
-    let path = format!("{}{}", "https://rest.ensembl.org", path);
-
-    client.get(path.as_str())
-        .header(reqwest::header::CONTENT_TYPE, "text/x-fasta")
-        .query(&[("type", sequence_type), ("object_type", &"transcript".to_string())])
-        .send()
 }
