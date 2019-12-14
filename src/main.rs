@@ -103,15 +103,14 @@ fn main() -> std::io::Result<()> {
                     }
                 }
             } else {
-                let mut path = "/sequence/id/".to_string();
                 let id = id_command.value_of("id").unwrap();
-                path.push_str(id);
-    
-                let mut response = ensembl_client(&path, &sequence_type).unwrap();
-    
-                let stdout = stdout();
-                let mut out = BufWriter::new(stdout.lock());
-                writeln!(out, "{}", response.text().unwrap()).unwrap();
+
+                let options = Options {
+                    format: Some(Format::Fasta),
+                    data_type: Some(Type::Cds)
+                };
+
+                EnsemblApi::new().get_sequence_id(id, options);
             }
         }
     }
