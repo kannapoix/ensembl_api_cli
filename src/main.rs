@@ -53,7 +53,8 @@ fn main() -> std::io::Result<()> {
 
     if let Some(sequence_command) = matches.subcommand_matches("sequence") {
         if let Some(id_command) = sequence_command.subcommand_matches("id") {
-            let sequence_type = id_command.value_of("type").unwrap_or("cdna").to_string();
+            let sequence_type = id_command.value_of("type").unwrap_or("cdna");
+            let format = id_command.value_of("format").unwrap_or("fasta");
 
             if id_command.is_present("directory") {
                 let directory = Path::new(matches.value_of("directory").unwrap_or("./data"));
@@ -104,11 +105,7 @@ fn main() -> std::io::Result<()> {
                 }
             } else {
                 let id = id_command.value_of("id").unwrap();
-
-                let options = Options {
-                    format: Some(Format::Fasta),
-                    data_type: Some(Type::Cds)
-                };
+                let options = Options::from((format, sequence_type));
 
                 EnsemblApi::new().get_sequence_id(id, options);
             }
