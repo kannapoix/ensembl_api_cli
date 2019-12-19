@@ -93,3 +93,27 @@ pub enum Type {
     Cds,
     Protein
 }
+
+impl From<(&str, &str)> for Options {
+    fn from(options: (&str, &str)) -> Options {
+        let format = match options.0 {
+            "fasta" => Some(Format::Fasta),
+            "full" => Some(Format::Full),
+            "condensed" => Some(Format::Condensed),
+            _ => None,
+        };
+
+        let data_type = match options.1 {
+            "genomic" => Some(Type::Genomic),
+            "cdna" => Some(Type::Cdna),
+            "cds" => Some(Type::Cds),
+            "protein" => Some(Type::Protein),
+            _=> None,
+        };
+
+        Options {
+            format: format,
+            data_type: data_type
+        }
+    }
+}
