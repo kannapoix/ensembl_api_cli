@@ -57,8 +57,8 @@ fn main() -> std::io::Result<()> {
             let format = id_command.value_of("format").unwrap_or("fasta");
 
             if id_command.is_present("directory") {
-                let directory = Path::new(matches.value_of("directory").unwrap_or("./data"));
-            
+                let directory = Path::new(id_command.value_of("directory").unwrap_or("./data"));
+
                 fs::create_dir_all("./result")?;
             
                 if directory.is_dir() {
@@ -84,7 +84,6 @@ fn main() -> std::io::Result<()> {
                 
                         for line in f.lines() {
                             let id = line.unwrap();
-            
                             let mut response = get_transcript_sequence_by_id(&id, &sequence_type).unwrap();
                 
                             if response.status().is_success() {
