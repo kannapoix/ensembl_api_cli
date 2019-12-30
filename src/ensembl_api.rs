@@ -19,8 +19,8 @@ pub fn failed_record_to_file(file: &mut File, failed_id: &str) {
 
 pub fn get_transcript_sequence_by_id(id: &str, sequence_type: &str) -> Result<reqwest::Response, reqwest::Error> {
     let client = reqwest::Client::new();
-    let path = format!("{}{}", "/sequence/id/", id);
-                
+    let path = format!("{}{}", "https://rest.ensembl.org/sequence/id/", id);
+
     client.get(path.as_str())
         .header(reqwest::header::CONTENT_TYPE, "text/x-fasta")
         .query(&[("type", sequence_type), ("object_type", &"transcript".to_string())])
