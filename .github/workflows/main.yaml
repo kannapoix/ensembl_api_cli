@@ -1,0 +1,34 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    # - uses: actions/checkout@v2
+    # - uses: actions-rs/toolchain@v1
+    #   with:
+    #     toolchain: stable
+    #     target: x86_64-pc-windows-gnu
+    #     override: true
+    # - name: Build for Windows.
+    #   uses: actions-rs/cargo@v1.0.1
+    #   with:
+    #     command: build
+    #     args: --release --all-features
+    #     use-cross: true
+    - name: Checkout code
+      uses: actions/checkout@master
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        prerelease: true
+    
