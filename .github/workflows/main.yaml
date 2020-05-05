@@ -12,8 +12,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Build App
+    - name: Checkout
       uses: actions/checkout@v2
+    - name: Build
       uses: actions-rs/cargo@v1
       with:
         use-cross: true
