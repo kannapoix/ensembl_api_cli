@@ -1,13 +1,13 @@
-# Ensemble API CLI
+# Ensembl API CLI
 This is cli for calling [Ensembl API](https://rest.ensembl.org/).  
 This project is currently at the experimental stage.  
 Not all endpoints are supported.  
 Only following endpoints and data types are callable.  
 
 ## Callable endpoints
-|  Endpoint  |  Options  |
+|  Endpoint  |  Availabe Options  |
 | ---- | ---- |
-|  GET /sequence/id  |  object_type=transcript, content-type=text/xfasta |
+|  GET /sequence/id  |  object_type=transcript, content-type=text/xfasta, type |
 
 # Download
 Binaries are available at the [release paga](https://github.com/kannapoix/ensembl_api_cli/releases) of Github.  
@@ -16,7 +16,7 @@ Binaries are available at the [release paga](https://github.com/kannapoix/ensemb
 ## From ID
 This will get transctipt as fasta format.
 ```
-$ ensemble_api_cli --id <ID>
+$ ensemble_api_cli sequence id <ID>
 ```
 
 ## From file
@@ -30,5 +30,5 @@ $ ensembl_api_cli --directory <Path to directory>
 Help option can be put for any command or subcommand.
 ```
 $ ensembl_api_cli --help
-$ ensembl_api_cli swquence id --help
+$ ensembl_api_cli sequence id --help
 ```
