@@ -17,7 +17,8 @@ jobs:
     - name: Build for Linux
       uses: actions-rs/cargo@v1
       with:
-        command: build --release
+        command: build
+        args: --release
     # - name: Build for Mac
     #   uses: actions-rs/cargo@v1
     #   with:
